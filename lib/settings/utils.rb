@@ -1,3 +1,5 @@
+require "active_support/core_ext/string/inflections"
+
 module Settings
   module Utils
     def to_key(base)
@@ -10,6 +12,10 @@ module Settings
       end
 
       base.name.downcase
+    end
+
+    def class_paths(base)
+      base.name.split("::").map(&:underscore)
     end
   end
 end

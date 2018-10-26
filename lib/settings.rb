@@ -8,9 +8,21 @@ module Settings
   extend Utils
 
   CollectionNotFound = Class.new(StandardError)
+  ManualRegistrationError = Class.new(StandardError)
 
-  def self.register_collection(key)
-    collection_set.store(key.to_s, Collection.new)
+  def self.register_class(base)
+    unless base.ancestors.include?(Settings::Configuration)
+      raise ManualRegistrationError, "Do not register classes yourself. " \
+        "Instead, include 'Settings::Confguration' in your class."
+    end
+
+    names = class_paths(base)
+    root = names.shift
+    root_collection = Collection.new(root)
+    names.reduce(root_collection) do |collection, name|
+      collection.collection(name)
+    end
+    collection_set[root] = root_collection
   end
 
   def self.collection?(key)

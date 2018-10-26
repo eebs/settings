@@ -13,6 +13,20 @@ RSpec.describe Settings do
 
       expect(Settings.example.api_key).to eq "abc123"
     end
+
+    describe "when namespaced" do
+      it "nests the collection by the namespace" do
+        module Namespace
+          class ExampleSettings
+            include Settings::Configuration
+
+            setting :api_key, "abc123"
+          end
+        end
+
+        expect(Settings.namespace.example_settings.api_key).to eq "abc123"
+      end
+    end
   end
 
   describe ".register_collection" do

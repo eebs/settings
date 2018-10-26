@@ -4,8 +4,10 @@ module Settings
   class Collection
     SettingNotFound = Class.new(StandardError)
 
-    def initialize
+    def initialize(key)
+      @key = key
       @settings = Hash.new
+      @collections = Hash.new { |hash, key| hash[key] = Collection.new(key) }
     end
 
     def store(key, value)
@@ -17,11 +19,17 @@ module Settings
       settings.empty?
     end
 
+    def collection(key)
+      key = key.to_s
+      collections[key]
+    end
+
     private
 
-    attr_reader :settings
+    attr_reader :settings, :collections
 
     def method_missing(name, *args)
+      raise "Need to first check any collections for :name, then check settings."
       key = name.to_s
       if settings.include?(key)
         settings[key].value
