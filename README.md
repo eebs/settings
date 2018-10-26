@@ -1,8 +1,6 @@
 # Settings
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/settings`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Rails Application settings.
 
 ## Installation
 
@@ -22,7 +20,35 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+class Api
+  include Settings::Configuration
+
+  setting :username, "admin"
+  setting :password, ENV["API_PASSWORD"]
+end
+```
+
+These settings are then available from the `Settings` module, namespaced
+by the class.
+
+```ruby
+Settings.api.username #=> "admin"
+Settings.api.password #=> Whatever API_PASSWORD was set to
+```
+
+This is just the first step! Hopefully more features will follow, such
+as:
+
+* Required/optional settings. A required setting would not allow the app
+  to boot if it was not present.
+* Environment based settings. Different settings depending on if the app
+  is in development or production mode
+* Types/type checking. Settings like `EMAIL_ENABLED` are hard to set
+  from the environment, due to lack of real booleans.
+* Validation. Some configuration may have explicitly allowed values.
+  Being able to validate that the configuration matches one of those
+  values might be useful.
 
 ## Development
 
@@ -32,4 +58,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/settings.
+Bug reports and pull requests are welcome on GitHub at https://github.com/eebs/settings.
