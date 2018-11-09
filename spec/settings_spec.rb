@@ -15,6 +15,20 @@ RSpec.describe Settings do
     end
   end
 
+  describe "accessing a namedspaced collection of settings" do
+    it "makes settings available under a namespace" do
+      module EmailSettings
+        class SendGrid
+          include Settings::Configuration
+
+          setting :api_key, "def456"
+        end
+      end
+
+      expect(Settings.email_settings.send_grid.api_key).to eq "def456"
+    end
+  end
+
   describe ".register_collection" do
     it "registers a new collection" do
       Settings.register_collection("foo")
@@ -41,12 +55,12 @@ RSpec.describe Settings do
     end
   end
 
-  describe ".store" do
+  describe ".store_at" do
     describe "when the collection has been registered" do
       it "stores the value by the key for the collection" do
         Settings.register_collection(:example)
 
-        Settings.store(:example, "secret", "abc123")
+        Settings.store_at([:example], "secret", "abc123")
 
         expect(Settings.collection(:example).secret).to eq "abc123"
       end
@@ -55,7 +69,7 @@ RSpec.describe Settings do
     describe "when the collection has not been registered" do
       it "raises a CollectionNotFound exception" do
         expect{ Settings.store(:example, "secret", "abc123") }.to(
-          raise_error(Settings::CollectionNotFound)
+          raise_error(Settings::Collection::CollectionNotFound)
         )
       end
     end
@@ -73,7 +87,7 @@ RSpec.describe Settings do
     describe "when the collection has not been registered" do
       it "raises a CollectionNotFound exception" do
         expect{ Settings.collection(:example) }.to(
-          raise_error(Settings::CollectionNotFound)
+          raise_error(Settings::Collection::CollectionNotFound)
         )
       end
     end

@@ -1,15 +1,9 @@
+require "active_support/core_ext/string/inflections"
+
 module Settings
   module Utils
-    def to_key(base)
-      if base.name == nil
-        raise "Does not support anonymous classes"
-      end
-
-      if base.name.include?("::")
-        raise "Does not support namespaced classes"
-      end
-
-      base.name.downcase
+    def collection_path(klass)
+      klass.to_s.split("::").map(&:underscore)
     end
   end
 end

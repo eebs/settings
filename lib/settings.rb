@@ -7,44 +7,40 @@ require "settings/utils"
 module Settings
   extend Utils
 
-  CollectionNotFound = Class.new(StandardError)
-
-  def self.register_collection(key)
-    collection_set.store(key.to_s, Collection.new)
-  end
-
-  def self.collection?(key)
-    collection_set.include?(key.to_s)
-  end
-
-  def self.store(collection_key, key, value)
-    collection(collection_key).store(key, value)
-  end
-
-  def self.collection(key)
-    if collection?(key)
-      collection_set[key.to_s]
-    else
-      raise CollectionNotFound, "Collection for '#{key}' has not been registered"
+  def self.register_collection(base_class)
+    names = collection_path(base_class)
+    names.reduce(root_collection) do |collection, name|
+      collection.create(key: name)
     end
   end
 
+  def self.collection?(key)
+    root_collection.collection?(key)
+  end
+
+  def self.store_at(path, key, value)
+    root_collection.store_at(path, key, value)
+  end
+
   def self.reset
-    collection_set.clear
+    root_collection.reset
   end
 
   private
 
-  def self.method_missing(name, *args)
-    key = name.to_s
-    if collection_set.include?(key)
-      collection_set[key]
+  def self.collection(key)
+    if collection?(key)
+      root_collection.collection(key)
     else
-      super
+      raise Collection::CollectionNotFound, "Collection '#{key}' has not been registered"
     end
   end
 
-  def self.collection_set
-    @_collection_set ||= Hash.new
+  def self.method_missing(name, *args)
+    collection(name)
+  end
+
+  def self.root_collection
+    @_root_collection ||= Collection.new(key: 'root')
   end
 end

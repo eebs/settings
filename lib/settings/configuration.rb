@@ -4,18 +4,15 @@ module Settings
   module Configuration
     def self.included(base)
       base.extend(ClassMethods)
-      Settings.register_collection(base.key)
+      Settings.register_collection(base)
     end
 
     module ClassMethods
       include Utils
 
-      def key
-        @key ||= to_key(self)
-      end
-
       def setting(key, value)
-        Settings.store(to_key(self), key, value)
+        path = collection_path(self)
+        Settings.store_at(path, key, value)
       end
     end
   end
