@@ -20,6 +20,8 @@ Or install it yourself as:
 
 ## Usage
 
+### Basic
+
 ```ruby
 class Api
   include Settings::Configuration
@@ -35,6 +37,29 @@ by the class.
 ```ruby
 Settings.api.username #=> "admin"
 Settings.api.password #=> Whatever API_PASSWORD was set to
+```
+
+### Namespaced
+
+You can also nest the configuration classes within a module to namespace the
+settings.
+
+```ruby
+module Email
+  class Api
+    include Settings::Configuration
+
+    setting :username, "admin"
+    setting :password, ENV["API_PASSWORD"]
+  end
+end
+```
+
+Access to the setting is namespaced by the class's namespace.
+
+```ruby
+Settings.email.api.username #=> "admin"
+Settings.email.api.password #=> Whatever API_PASSWORD was set to
 ```
 
 This is just the first step! Hopefully more features will follow, such
