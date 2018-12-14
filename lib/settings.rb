@@ -18,8 +18,8 @@ module Settings
     root_collection.collection?(key)
   end
 
-  def self.store_at(path, key, value)
-    root_collection.store_at(path, key, value)
+  def self.store_at(path, key, value, **options)
+    root_collection.store_at(path, key, value, options)
   end
 
   def self.reset

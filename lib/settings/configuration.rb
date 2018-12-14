@@ -10,9 +10,9 @@ module Settings
     module ClassMethods
       include Utils
 
-      def setting(key, value)
+      def setting(key, value, **options)
         path = collection_path(self)
-        Settings.store_at(path, key, value)
+        Settings.store_at(path, key, value, options)
       end
     end
   end

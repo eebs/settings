@@ -29,6 +29,18 @@ RSpec.describe Settings do
     end
   end
 
+  describe "accessing a required setting that is nil" do
+    it "raises an error" do
+      class RequiredTest
+        include Settings::Configuration
+
+        setting :api_key, nil, required: true
+      end
+
+      expect { Settings.required_test.api_key }.to raise_error StandardError
+    end
+  end
+
   describe ".register_collection" do
     it "registers a new collection" do
       Settings.register_collection("foo")

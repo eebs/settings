@@ -12,21 +12,21 @@ module Settings
       @collections = Hash.new
     end
 
-    def store(key, value)
+    def store(key, value, **options)
       key = key.to_s
       if settings.include?(key)
         raise ExistingSetting, "Existing setting for #{key}"
       else
-        settings[key] = Setting.new(key: key, value: value)
+        settings[key] = Setting.new(key: key, value: value, **options)
       end
     end
 
-    def store_at(path, key, value)
+    def store_at(path, key, value, **options)
       if path.empty?
-        store(key, value)
+        store(key, value, options)
       else
         collection_name, *rest = path
-        collection(collection_name).store_at(rest, key, value)
+        collection(collection_name).store_at(rest, key, value, options)
       end
     end
 
